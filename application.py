@@ -1,7 +1,6 @@
 import random
 
 class Game(object):
-<<<<<<< HEAD
     """Creates a class with a player in battleship"""
     def __init__(self):
         """Single Player Battleship"""
@@ -9,7 +8,7 @@ class Game(object):
 
     def fill_board(self):
         for x in range(0,10): #for each element 
-          self.board.append(["O"] * 10) #multiply it 10 times to create board
+          self.board.append([" "] * 10) #multiply it 10 times to create board
 
     def print_board(self):
         """function to print board"""
@@ -17,17 +16,27 @@ class Game(object):
                       Let's play Battleship!
         Instructions: Guess the Row and the Column of the ship.
         """
-        print "0|1|2|3|4|5|6|7|8|9"
-        print "-------------------\n"
+        print "   |  0  |  1  |  2  |  3  |  4  |  5  |  6  |  7  |  8  |  9  |"
+        print "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  \n"
 
-        for fila in self.board:
-          print " ".join(fila) #join takes the format away and adds a space
+        cont = 0
+        for i in self.board:
+            print str(cont) + "  |  " + "  |  ".join(i) + "  |"
+            print "- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n"
+            cont += 1
+
+    def position(self):
+        return random.randit(1,2)
 
     def fila_aleatoria(self):
         return random.randint(0,len(self.board)-1)
 
     def columna_aleatoria(self):
         return random.randint(0,len(self.board[0])-1)
+
+
+
+    
 
     def ship_variables(self):
         self.barco_fila = self.fila_aleatoria()
