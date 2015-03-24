@@ -1,3 +1,4 @@
+#-*- coding: utf-8 -*-
 import random
 
 class Game(object):
@@ -33,6 +34,8 @@ class Game(object):
 
     def columna_aleatoria(self):
         return random.randint(0,len(self.board[0])-1)
+
+
 
     def validar_horizontal(self, barco_fila, barco_col, contador):
         """Validacion Posicion Horizontal"""
@@ -79,20 +82,28 @@ class Game(object):
 
 
 
-    
 
     def ship_variables(self):
         self.barco_fila = self.fila_aleatoria()
         self.barco_col = self.columna_aleatoria()
+        self.barco_fil = self.fila_aleatoria()
+        self.barco_co = self.columna_aleatoria()
+
+
+
         print self.barco_fila
         print self.barco_col
+        print self.barco_fil
+        print self.barco_co
+
+
 
     def user_entry(self):
         for turno in range(4):
             adivina_fila = input("Adivina fila:")
             adivina_columna = input("Adivina columna:")
 
-            if adivina_fila == self.barco_fila and adivina_columna == self.barco_col:
+            if adivina_fila == self.barco_fila and adivina_columna == self.barco_col or adivina_fila == self.barco_fil and adivina_columna == self.barco_co:
                 print "Felicitaciones! Hundiste mi barco!"
                 break
             else:
