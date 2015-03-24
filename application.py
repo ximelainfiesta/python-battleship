@@ -34,6 +34,49 @@ class Game(object):
     def columna_aleatoria(self):
         return random.randint(0,len(self.board[0])-1)
 
+    def validar_horizontal(self, barco_fila, barco_col, contador):
+        """Validacion Posicion Horizontal"""
+        cont_barcos = 0
+        for i in range(0, contador):
+            #print  "Contador: " + str(i)
+            if self.board[barco_fila + i][barco_col] == "⚓":
+                #print False
+                cont_barcos += 1
+            else:
+                #print True
+                cont_barcos += 0
+
+        if cont_barcos == 0:
+            barco_fila = 0
+            barco_col = 0
+            return 1
+        else:
+            barco_fila = 0
+            barco_col = 0
+            return 2
+
+    def validar_vertical(self, barco_fila, barco_col, contador):
+        """Validacion posicion Vertical"""
+        cont_barcos = 0
+        for i in range(0, contador):
+            #print  "Contador: " + str(i)
+            if self.board[barco_fila][barco_col + i] == "⚓":
+                #print False
+                cont_barcos += 1
+            else:
+                #print True
+                cont_barcos += 0
+
+        if cont_barcos == 0:
+            barco_fila = 0
+            barco_col = 0
+            return 1
+        else:
+            barco_fila = 0
+            barco_col = 0
+            return 2
+
+
 
 
     
