@@ -49,6 +49,9 @@ class Game(object):
         print self.ship_row
         print self.ship_col
 
+    def put_ship(self):
+
+
     def user_entry(self):
         turn = 0
         while turn < 5:
@@ -96,6 +99,13 @@ class Game(object):
             except TypeError:
                 print "Invalid Option"
 
+    def clear():
+        """Clears the screen at the terminal. Works on windows and ubuntu."""
+        if os.name == "posix":
+            os.system("reset")
+        elif os.name == "nt":
+            os.system("cls")
+
     def call(self):
         """ Calls the functions in order """
         self.fill_board()
@@ -104,6 +114,8 @@ class Game(object):
         self.column_random()
         self.ship_variables()
         self.user_entry()
+
+
 
 """ Calls Single Player """
 GO = Game()
