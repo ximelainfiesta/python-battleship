@@ -4,7 +4,7 @@ import copy
 import random
 import os
 
-class Game(object):
+class Game_SP(object):
 
     def print_board(self, single_player, board):
         """ Prints board for single player mode """
@@ -308,5 +308,45 @@ class Game(object):
             self.print_board("u", user_board)
             raw_input("To end computer turn hit ENTER")
 
-GO = Game()
-GO.main()
+class Game_MP(Game_SP):
+    def start(self):
+        print "Multiplayer"
+
+class Menu(object):
+    
+    def start(self):
+        answer = raw_input("Ingrese opcion: ")
+        if answer == "1":
+            SP = Game_SP()
+            SP.main()
+        else:
+            MP = Game_MP()
+            MP.start()
+
+
+if __name__ == "__main__":
+    GO = Menu()
+    GO.start()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
