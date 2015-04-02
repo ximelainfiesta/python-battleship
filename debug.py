@@ -4,7 +4,7 @@ import copy
 import random
 import os
 
-class Game(object):
+class Game_SP(object):
 
     def print_board(self, single_player, board):
         """ Prints board for single player mode """
@@ -37,10 +37,10 @@ class Game(object):
                 elif single_player == "u":
                     print board[i][j],
                 elif single_player == "c":
-                    #if board[i][j] == "*" or board[i][j] == "$":
-                    print board[i][j],
-                    #else:
-                        #print " ",
+                    if board[i][j] == "*" or board[i][j] == "$":
+                        print board[i][j],
+                    else:
+                        print " ",
 
                 if j != 9:
                     print " | ",
@@ -308,5 +308,288 @@ class Game(object):
             self.print_board("u", user_board)
             raw_input("To end computer turn hit ENTER")
 
-GO = Game()
-GO.main()
+class Game_MP(Game_SP):
+
+    def print_board(self, single_player, board):
+        """ Prints board """
+        self.clear()
+        #find out if you are printing the p1 or p2 board
+        player = "Player Two"
+        if single_player == "p1":
+            player = "Player One"
+
+        print "The " + player + "'s board look like this: \n"
+
+        #print the horizontal numbers
+        print " ",
+        for i in range(10):
+            print "  " + str(i+1) + "  ",
+        print "\n"
+
+        for i in range(10):
+
+            #print the vertical line number
+            if i != 9:
+                print str(i+1) + "  ",
+            else:
+                print str(i+1) + " ",
+
+            #print the board values, and cell dividers
+            for j in range(10):
+                if board[i][j] == -1:
+                    print ' ',
+                elif single_player == "p1":
+                    print board[i][j],
+                elif single_player == "p2":
+                    #if board[i][j] == "*" or board[i][j] == "$":
+                    print board[i][j],
+                    #else:
+                        #print " ",
+
+                if j != 9:
+                    print " | ",
+            print
+
+            #print a horizontal line
+            if i != 9:
+                print "   ----------------------------------------------------------"
+            else:
+                print
+
+    def print_board2(self, single_player, board):
+        """ Prints board showing hits """
+        self.clear()
+        #find out if you are printing the p1 or p2 board
+        player = "Player Two"
+        if single_player == "p1":
+            player = "Player One"
+
+        print "The " + player + "'s board look like this: \n"
+
+        #print the horizontal numbers
+        print " ",
+        for i in range(10):
+            print "  " + str(i+1) + "  ",
+        print "\n"
+
+        for i in range(10):
+
+            #print the vertical line number
+            if i != 9:
+                print str(i+1) + "  ",
+            else:
+                print str(i+1) + " ",
+
+            #print the board values, and cell dividers
+            for j in range(10):
+                if board[i][j] == -1:
+                    print ' ',
+                elif single_player == "p1":
+                    #if board[i][j] == "*" or board[i][j] == "$":
+                    print board[i][j],
+                    #else:
+                        #print " ",
+                elif single_player == "p2":
+                    #if board[i][j] == "*" or board[i][j] == "$":
+                    print board[i][j],
+                    #else:
+                        #print " ",
+
+                if j != 9:
+                    print " | ",
+            print
+
+            #print a horizontal line
+            if i != 9:
+                print "   ----------------------------------------------------------"
+            else:
+                print  
+
+    def p1_place_ships(self, board, ships):
+        """Get coordinates from user and validates the position"""
+        for ship in ships.keys():
+
+            valid = False
+            while not valid:
+
+                self.print_board("p1", board)
+                print "Placing a/an " + ship
+                row, col = self.get_coor()
+                ori = self.v_or_h()
+                valid = self.validate(board, ships[ship], row, col, ori)
+                if not valid:
+                    print "Cannot place a ship there.\nPlease take a look at the board and try again."
+                    raw_input("Hit ENTER to continue")
+
+            #place the ship
+            board = self.place_ship(board, ships[ship], ship[0], ori, row, col)
+            self.print_board("p1", board)
+
+        raw_input("Done placing user ships. Hit ENTER to continue")
+        return board
+
+    def p2_place_ships(self, board, ships):
+        """Generates random coordinates and validates the position"""
+        for ship in ships.keys():
+
+            valid = False
+            while not valid:
+
+                self.print_board("p2", board)
+                print "Placing a/an " + ship
+                row, col = self.get_coor()
+                ori = self.v_or_h()
+                valid = self.validate(board, ships[ship], row, col, ori)
+                if not valid:
+                    print "Cannot place a ship there.\nPlease take a look at the board and try again."
+                    raw_input("Hit ENTER to continue")
+
+            #place the ship
+            board = self.place_ship(board, ships[ship], ship[0], ori, row, col)
+            self.print_board("p2", board)
+
+        raw_input("Done placing user ships. Hit ENTER to continue")
+        return board
+
+    def p1_move(self, board):
+        """Get coordinates from the user and tries to make a move"""
+        #if move is a hit, check ship sunk and win condition
+        while True:
+            row, col = self.get_coor()
+            res = self.make_move(board, row, col)
+            if res == "hit":
+                print "Hit at " + str(row+1) + "," + str(col+1)
+                self.check_sink(board, row, col)
+                board[row][col] = '$'
+                if self.check_win(board):
+                    return "WIN"
+            elif res == "miss":
+                print "Sorry, " + str(row+1) + "," + str(col+1) + " is a miss."
+                board[row][col] = "*"
+            elif res == "try again":
+                print "Sorry, that coordinate was already hit. Please try again"
+
+            if res != "try again":
+                return board
+
+    def p2_move(self, board):
+        """Generates user coordinates from the user and try to make move"""
+        #if move is a hit, check ship sunk and win condition
+        while True:
+            row, col = self.get_coor()
+            res = self.make_move(board, row, col)
+            if res == "hit":
+                print "Hit at " + str(row+1) + "," + str(col+1)
+                self.check_sink(board, row, col)
+                board[row][col] = '$'
+                if self.check_win(board):
+                    return "WIN"
+            elif res == "miss":
+                print "Sorry, " + str(row+1) + "," + str(col+1) + " is a miss."
+                board[row][col] = "*"
+            elif res == "try again":
+                print "Sorry, that coordinate was already hit. Please try again"
+
+            if res != "try again":
+                return board
+
+    def main(self):
+        """Initiates my game"""
+        #types of ships
+        ships = {"Aircraft Carrier":5,
+                 "Battleship":4,
+                 "Submarine":3,
+                 "Destroyer":3,
+                 "Patrol Boat":2}
+
+        #setup blank 10x10 board
+        board = []
+        for i in range(10):
+            board_row = []
+            for j in range(10):
+                board_row.append(-1)
+            board.append(board_row)
+
+        #setup p1 and p2 boards
+        p1_board = copy.deepcopy(board)
+        p2_board = copy.deepcopy(board)
+
+        #add ships as last element in the array
+        p1_board.append(copy.deepcopy(ships))
+        p2_board.append(copy.deepcopy(ships))
+
+        #ship placement
+        p1_board = self.p1_place_ships(p1_board, ships)
+        p2_board = self.p2_place_ships(p2_board, ships) #AQUI modificar el de la computadora para que sea player 2
+
+        #game main loop
+        while 1:
+
+            #p1 move
+            print "PLAYER ONE TURN"
+            self.print_board2("p2", p2_board)
+            p2_board = self.p1_move(p2_board)
+
+            #check if user won
+            if p2_board == "WIN":
+                print "User WON! :)"
+                quit()
+
+            #display current p2 board
+            self.print_board2("p2", p2_board)
+            raw_input("To end user turn hit ENTER")
+
+            #p2 move
+            print "PLAYER TWO TURN"
+            self.print_board2("p1", p1_board)
+            p1_board = self.p2_move(p1_board)
+
+            #check if p2 won
+            if p1_board == "WIN":
+                print "Computer WON! :("
+                quit()
+
+            #display p1 board
+            self.print_board2("p1", p1_board)
+            raw_input("To end computer turn hit ENTER")
+
+class Menu(object):
+    
+    def start(self):
+        answer = raw_input("Ingrese opcion: ")
+        if answer == "1":
+            SP = Game_SP()
+            SP.main()
+        elif answer == "2":
+            MP = Game_MP()
+            MP.main()
+        else:
+            pass
+
+
+if __name__ == "__main__":
+    GO = Menu()
+    GO.start()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
