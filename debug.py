@@ -37,10 +37,10 @@ class Game_SP(object):
                 elif single_player == "u":
                     print board[i][j],
                 elif single_player == "c":
-                    if board[i][j] == "*" or board[i][j] == "$":
-                        print board[i][j],
-                    else:
-                        print " ",
+                    #if board[i][j] == "*" or board[i][j] == "$":
+                    print board[i][j],
+                    #else:
+                        #print " ",
 
                 if j != 9:
                     print " | ",
@@ -357,7 +357,7 @@ class Game_MP(Game_SP):
                 print
 
     def print_board2(self, single_player, board):
-        """ Prints board showing hits """
+        """ Prints board showing only hits """
         self.clear()
         #find out if you are printing the p1 or p2 board
         player = "Player Two"
@@ -385,15 +385,15 @@ class Game_MP(Game_SP):
                 if board[i][j] == -1:
                     print ' ',
                 elif single_player == "p1":
-                    #if board[i][j] == "*" or board[i][j] == "$":
-                    print board[i][j],
-                    #else:
-                        #print " ",
+                    if board[i][j] == "*" or board[i][j] == "$":
+                        print board[i][j],
+                    else:
+                        print " ",
                 elif single_player == "p2":
-                    #if board[i][j] == "*" or board[i][j] == "$":
-                    print board[i][j],
-                    #else:
-                        #print " ",
+                    if board[i][j] == "*" or board[i][j] == "$":
+                        print board[i][j],
+                    else:
+                        print " ",
 
                 if j != 9:
                     print " | ",
@@ -404,6 +404,7 @@ class Game_MP(Game_SP):
                 print "   ----------------------------------------------------------"
             else:
                 print  
+
 
     def p1_place_ships(self, board, ships):
         """Get coordinates from user and validates the position"""
@@ -520,7 +521,7 @@ class Game_MP(Game_SP):
 
         #ship placement
         p1_board = self.p1_place_ships(p1_board, ships)
-        p2_board = self.p2_place_ships(p2_board, ships) #AQUI modificar el de la computadora para que sea player 2
+        p2_board = self.p2_place_ships(p2_board, ships) 
 
         #game main loop
         while 1:
@@ -532,12 +533,17 @@ class Game_MP(Game_SP):
 
             #check if user won
             if p2_board == "WIN":
-                print "User WON! :)"
+                print "Player One WON! :)"
                 quit()
 
             #display current p2 board
             self.print_board2("p2", p2_board)
-            raw_input("To end user turn hit ENTER")
+            raw_input("To see your board, hit ENTER")
+            
+
+            #display current p1 board
+            self.print_board("p1", p1_board)
+            raw_input("To end player one turn hit ENTER")
 
             #p2 move
             print "PLAYER TWO TURN"
@@ -546,12 +552,18 @@ class Game_MP(Game_SP):
 
             #check if p2 won
             if p1_board == "WIN":
-                print "Computer WON! :("
+                print "Player Two! :("
                 quit()
 
             #display p1 board
             self.print_board2("p1", p1_board)
-            raw_input("To end computer turn hit ENTER")
+            raw_input("To see your board, hit ENTER")
+            
+
+            #display current p2 board
+            self.print_board("p2", p2_board)
+            raw_input("To end player two turn hit ENTER")
+
 
 class Menu(object):
     
@@ -570,16 +582,6 @@ class Menu(object):
 if __name__ == "__main__":
     GO = Menu()
     GO.start()
-
-
-
-
-
-
-
-
-
-
 
 
 
