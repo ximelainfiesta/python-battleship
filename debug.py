@@ -3,14 +3,16 @@
 import copy
 import random
 import os
+import time
 
 class Game_SP(object):
+    """ Single Player Modality """
 
     def print_board(self, single_player, board):
         """ Prints board for single player mode """
         self.clear()
         #find out if you are printing the computer or user board
-        player = "Computer"
+        player = "Computer" 
         if single_player == "u":
             player = "User"
 
@@ -52,6 +54,7 @@ class Game_SP(object):
             else:
                 print
 
+
     def user_place_ships(self, board, ships):
         """Get coordinates from user and validates the position"""
         for ship in ships.keys():
@@ -65,7 +68,7 @@ class Game_SP(object):
                 ori = self.v_or_h()
                 valid = self.validate(board, ships[ship], row, col, ori)
                 if not valid:
-                    print "Cannot place a ship there.\nPlease take a look at the board and try again."
+                    print "Can't place a ship there.\nPlease take a look at the board and try again."
                     raw_input("Hit ENTER to continue")
 
             #place the ship
@@ -286,11 +289,12 @@ class Game_SP(object):
             #user move
             self.print_board("c", comp_board)
             comp_board = self.user_move(comp_board)
+            time.sleep(1)
 
             #check if user won
             if comp_board == "WIN":
                 print "User WON! :)"
-                quit()
+                play_again()
 
             #display current computer board
             self.print_board("c", comp_board)
@@ -302,13 +306,14 @@ class Game_SP(object):
             #check if computer move
             if user_board == "WIN":
                 print "Computer WON! :("
-                quit()
+                play_again()
 
             #display user board
             self.print_board("u", user_board)
             raw_input("To end computer turn hit ENTER")
 
 class Game_MP(Game_SP):
+    """ Multi Player Modality """
 
     def print_board(self, single_player, board):
         """ Prints board """
@@ -403,7 +408,7 @@ class Game_MP(Game_SP):
             if i != 9:
                 print "   ----------------------------------------------------------"
             else:
-                print  
+                print
 
 
     def p1_place_ships(self, board, ships):
@@ -419,7 +424,7 @@ class Game_MP(Game_SP):
                 ori = self.v_or_h()
                 valid = self.validate(board, ships[ship], row, col, ori)
                 if not valid:
-                    print "Cannot place a ship there.\nPlease take a look at the board and try again."
+                    print "Can't place a ship there.\nPlease take a look at the board and try again."
                     raw_input("Hit ENTER to continue")
 
             #place the ship
@@ -442,7 +447,7 @@ class Game_MP(Game_SP):
                 ori = self.v_or_h()
                 valid = self.validate(board, ships[ship], row, col, ori)
                 if not valid:
-                    print "Cannot place a ship there.\nPlease take a look at the board and try again."
+                    print "Can't place a ship there.\nPlease take a look at the board and try again."
                     raw_input("Hit ENTER to continue")
 
             #place the ship
@@ -521,6 +526,79 @@ class Game_MP(Game_SP):
 
         #ship placement
         p1_board = self.p1_place_ships(p1_board, ships)
+        p2_board = self.p2_place_ships(p2_board, ships)
+
+        #game main loop
+        while 1:
+
+            #p1 move
+            print "PLAYER ONE TURN"
+            self.print_board2("p2", p2_board)
+            p2_board = self.p1_move(p2_board)
+            time.sleep(1)
+
+            #check if user won
+            if p2_board == "WIN":
+                print "Player One WON! :)"
+                play_again()
+
+            #display current p2 board
+            self.print_board2("p2", p2_board)
+            raw_input("To see your board, hit ENTER")
+
+            #display current p1 board
+            self.print_board("p1", p1_board)
+            raw_input("To end player one turn hit ENTER")
+
+            #p2 move
+            print "PLAYER TWO TURN"
+            self.print_board2("p1", p1_board)
+            p1_board = self.p2_move(p1_board)
+            time.sleep(1)
+
+            #check if p2 won
+            if p1_board == "WIN":
+                print "Player Two! :("
+                play_again()
+
+            #display p1 board
+            self.print_board2("p1", p1_board)
+            raw_input("To see your board, hit ENTER")
+
+            #display current p2 board
+            self.print_board("p2", p2_board)
+            raw_input("To end player two turn hit ENTER")
+
+class Salvo_Mode(Game_MP):
+    """ Salvo Modality """
+
+    def main(self):
+        """Initiates my game"""
+        #types of ships
+        ships = {"Aircraft Carrier":5,
+                 "Battleship":4,
+                 "Submarine":3,
+                 "Destroyer":3,
+                 "Patrol Boat":2}
+
+        #setup blank 10x10 board
+        board = []
+        for i in range(10):
+            board_row = []
+            for j in range(10):
+                board_row.append(-1)
+            board.append(board_row)
+
+        #setup p1 and p2 boards
+        p1_board = copy.deepcopy(board)
+        p2_board = copy.deepcopy(board)
+
+        #add ships as last element in the array
+        p1_board.append(copy.deepcopy(ships))
+        p2_board.append(copy.deepcopy(ships))
+
+        #ship placement
+        p1_board = self.p1_place_ships(p1_board, ships)
         p2_board = self.p2_place_ships(p2_board, ships) 
 
         #game main loop
@@ -530,11 +608,24 @@ class Game_MP(Game_SP):
             print "PLAYER ONE TURN"
             self.print_board2("p2", p2_board)
             p2_board = self.p1_move(p2_board)
+            time.sleep(1)
+            self.print_board2("p2", p2_board)
+            p2_board = self.p1_move(p2_board)
+            time.sleep(1)
+            self.print_board2("p2", p2_board)
+            p2_board = self.p1_move(p2_board)
+            time.sleep(1)
+            self.print_board2("p2", p2_board)
+            p2_board = self.p1_move(p2_board)
+            time.sleep(1)
+            self.print_board2("p2", p2_board)
+            p2_board = self.p1_move(p2_board)
+            time.sleep(1)
 
             #check if user won
             if p2_board == "WIN":
                 print "Player One WON! :)"
-                quit()
+                play_again()
 
             #display current p2 board
             self.print_board2("p2", p2_board)
@@ -549,11 +640,25 @@ class Game_MP(Game_SP):
             print "PLAYER TWO TURN"
             self.print_board2("p1", p1_board)
             p1_board = self.p2_move(p1_board)
+            time.sleep(1)
+            self.print_board2("p1", p1_board)
+            p1_board = self.p2_move(p1_board)
+            time.sleep(1)
+            self.print_board2("p1", p1_board)
+            p1_board = self.p2_move(p1_board)
+            time.sleep(1)
+            self.print_board2("p1", p1_board)
+            p1_board = self.p2_move(p1_board)
+            time.sleep(1)
+            self.print_board2("p1", p1_board)
+            p1_board = self.p2_move(p1_board)
+            time.sleep(1)
+
 
             #check if p2 won
             if p1_board == "WIN":
-                print "Player Two! :("
-                quit()
+                print "Player Two WON! :)"
+                play_again()
 
             #display p1 board
             self.print_board2("p1", p1_board)
@@ -566,22 +671,58 @@ class Game_MP(Game_SP):
 
 
 class Menu(object):
-    
+    """ Menu of Battleship that initiates """
+
     def start(self):
-        answer = raw_input("Ingrese opcion: ")
+        """ Starts the Game Battleship """
+
+        answer = raw_input("Enter Option: ")
         if answer == "1":
+            self.instructions()
+        elif answer == "2":
             SP = Game_SP()
             SP.main()
-        elif answer == "2":
+        elif answer == "3":
             MP = Game_MP()
             MP.main()
+        elif answer == "4":
+            SM = Salvo_Mode()
+            SM.main()
+        elif answer == "5":
+            quit()
         else:
-            pass
+            print "Only enter valid options"
+
+    def instructions(self):
+        print 
+
+def play_again():
+    """ Asks User to play again """
+    ask = raw_input("Do you want to return to the menu? Y/N: ")
+    ask = ask.lower()
+    if ask == "y":
+        board = []
+        GO = Menu()
+        GO.start()
+    elif ask == "n":
+        quit()
+    else:
+        print "Only enter Y or N"
 
 
 if __name__ == "__main__":
     GO = Menu()
     GO.start()
+
+
+
+
+
+
+
+
+
+
 
 
 
