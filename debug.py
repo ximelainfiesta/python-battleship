@@ -8,15 +8,25 @@ import time
 class Game_SP(object):
     """ Single Player Modality """
 
+    def __init__(self):
+        """Global Variables"""
+        self.user_name = []
+
+    def ask_user_name(self):
+        """ Asks the user for a name """
+        user_name = raw_input("Enter your name YO: ")
+        return self.user_name.append(user_name)
+
     def print_board(self, single_player, board):
         """ Prints board for single player mode """
         self.clear()
+
         #find out if you are printing the computer or user board
         player = "Computer" 
         if single_player == "u":
-            player = "User"
+            player = self.user_name[0]
 
-        print "The " + player + "'s board look like this: \n"
+        print player + "'s board look like this: \n"
 
         #print the horizontal numbers
         print " ",
@@ -54,7 +64,6 @@ class Game_SP(object):
             else:
                 print
 
-
     def user_place_ships(self, board, ships):
         """Get coordinates from user and validates the position"""
         for ship in ships.keys():
@@ -78,7 +87,6 @@ class Game_SP(object):
         raw_input("Done placing user ships. Hit ENTER to continue")
         return board
 
-
     def computer_place_ships(self, board, ships):
         """Generates random coordinates and validates the position"""
         for ship in ships.keys():
@@ -100,7 +108,6 @@ class Game_SP(object):
             board = self.place_ship(board, ships[ship], ship[0], ori, row, col)
 
         return board
-
 
     def place_ship(self, board, ship, single_player, ori, row, col):
         """Place ship based on orientation"""
@@ -256,6 +263,11 @@ class Game_SP(object):
 
     def main(self):
         """Initiates my game"""
+
+        print "SINGLE PLAYER YO"
+        self.ask_user_name()
+        time.sleep(1)
+
         #types of ships
         ships = {"Aircraft Carrier":5,
                  "Battleship":4,
@@ -293,7 +305,7 @@ class Game_SP(object):
 
             #check if user won
             if comp_board == "WIN":
-                print "User WON! :)"
+                print self.user_name[0] + " WON! :)"
                 play_again()
 
             #display current computer board
@@ -315,15 +327,25 @@ class Game_SP(object):
 class Game_MP(Game_SP):
     """ Multi Player Modality """
 
+    def __init__(self):
+        """Global Variables"""
+        self.players_name = []
+
+    def ask_user_name(self):
+        """ Asks the users for a name """
+        p1_name = raw_input("Player One, Enter your name YO: ")
+        p2_name = raw_input("Player Two, Enter your name YO: ")
+        return self.players_name.append(p1_name), self.players_name.append(p2_name)
+
     def print_board(self, single_player, board):
         """ Prints board """
         self.clear()
         #find out if you are printing the p1 or p2 board
-        player = "Player Two"
+        player = self.players_name[1]
         if single_player == "p1":
-            player = "Player One"
+            player = self.players_name[0]
 
-        print "The " + player + "'s board look like this: \n"
+        print player + "'s board look like this: \n"
 
         #print the horizontal numbers
         print " ",
@@ -365,11 +387,11 @@ class Game_MP(Game_SP):
         """ Prints board showing only hits """
         self.clear()
         #find out if you are printing the p1 or p2 board
-        player = "Player Two"
+        player = self.players_name[1]
         if single_player == "p1":
-            player = "Player One"
+            player = self.players_name[0]
 
-        print "The " + player + "'s board look like this: \n"
+        print player + "'s board look like this: \n"
 
         #print the horizontal numbers
         print " ",
@@ -409,7 +431,6 @@ class Game_MP(Game_SP):
                 print "   ----------------------------------------------------------"
             else:
                 print
-
 
     def p1_place_ships(self, board, ships):
         """Get coordinates from user and validates the position"""
@@ -501,6 +522,11 @@ class Game_MP(Game_SP):
 
     def main(self):
         """Initiates my game"""
+
+        print "MULTI PLAYER YO"
+        self.ask_user_name()
+        time.sleep(1)
+
         #types of ships
         ships = {"Aircraft Carrier":5,
                  "Battleship":4,
@@ -539,7 +565,7 @@ class Game_MP(Game_SP):
 
             #check if user won
             if p2_board == "WIN":
-                print "Player One WON! :)"
+                print self.p1_name + " WON! :)"
                 play_again()
 
             #display current p2 board
@@ -558,7 +584,7 @@ class Game_MP(Game_SP):
 
             #check if p2 won
             if p1_board == "WIN":
-                print "Player Two! :("
+                print self.p2_name[1] + " WON! :)"
                 play_again()
 
             #display p1 board
@@ -574,6 +600,11 @@ class Salvo_Mode(Game_MP):
 
     def main(self):
         """Initiates my game"""
+
+        print "SALVO MODE YO"
+        self.ask_user_name()
+        time.sleep(1)
+
         #types of ships
         ships = {"Aircraft Carrier":5,
                  "Battleship":4,
@@ -624,13 +655,12 @@ class Salvo_Mode(Game_MP):
 
             #check if user won
             if p2_board == "WIN":
-                print "Player One WON! :)"
+                print self.p1_name + " WON! :)"
                 play_again()
 
             #display current p2 board
             self.print_board2("p2", p2_board)
             raw_input("To see your board, hit ENTER")
-            
 
             #display current p1 board
             self.print_board("p1", p1_board)
@@ -654,10 +684,9 @@ class Salvo_Mode(Game_MP):
             p1_board = self.p2_move(p1_board)
             time.sleep(1)
 
-
             #check if p2 won
             if p1_board == "WIN":
-                print "Player Two WON! :)"
+                print self.p2_name[1] + " WON! :)"
                 play_again()
 
             #display p1 board
@@ -669,12 +698,20 @@ class Salvo_Mode(Game_MP):
             self.print_board("p2", p2_board)
             raw_input("To end player two turn hit ENTER")
 
-
 class Menu(object):
     """ Menu of Battleship that initiates """
 
     def start(self):
         """ Starts the Game Battleship """
+
+        print "BATTLESHIP BITCHES START MESSAGE"
+        print """MENU HOES
+        1-Instructions
+        2-Single Player
+        3-Multi Player
+        4-Salvo Mode
+        5-Exit
+        """
 
         answer = raw_input("Enter Option: ")
         if answer == "1":
@@ -698,6 +735,9 @@ class Menu(object):
 
 def play_again():
     """ Asks User to play again """
+    self.user_name = []
+    self.players_name = []
+
     ask = raw_input("Do you want to return to the menu? Y/N: ")
     ask = ask.lower()
     if ask == "y":
@@ -708,7 +748,6 @@ def play_again():
         quit()
     else:
         print "Only enter Y or N"
-
 
 if __name__ == "__main__":
     GO = Menu()
