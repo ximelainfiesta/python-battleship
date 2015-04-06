@@ -6,275 +6,9 @@ import copy
 import random
 import os
 import time
+import pygame
 
-
-###################### GLOBAL FUNCTIONS WITH IMAGES ######################
-
-def clear():
-    """Clears the screen at the terminal. Works on windows and ubuntu."""
-    if os.name == "posix":
-        os.system("reset")
-    elif os.name == "nt":
-        os.system("cls")
-
-def title():
-
-    clear()
-    print """
-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-x                                                           x
-x       __/\__            __/\__                __/\__      x
-x     ~~\____/~~        ~~\____/~~            ~~\____/~~    x
-x                                                           x
-x               ╔╗ ╔═╗╔╦╗╔╦╗╦  ╔═╗╔═╗╦ ╦╦╔═╗                x
-x               ╠╩╗╠═╣ ║  ║ ║  ║╣ ╚═╗╠═╣║╠═╝                x
-x               ╚═╝╩ ╩ ╩  ╩ ╩═╝╚═╝╚═╝╩ ╩╩╩                  x
-x                                                           x
-x       __/\__            __/\__                __/\__      x
-x     ~~\____/~~        ~~\____/~~            ~~\____/~~    x
-x                                                           x
-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-"""
-    time.sleep(0.1)
-    raw_input("Press ENTER to continue")
-
-
-def menu():
-    clear()
-    print """ 
-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-x                                                                 x
-x                         ╔╦╗╔═╗╔╗╔╦ ╦                            x
-x       __/\__            ║║║║╣ ║║║║ ║            __/\__          x
-x     ~~\____/~~          ╩ ╩╚═╝╝╚╝╚═╝          ~~\____/~~        x 
-x                                                                 x
-x                                                                 x
-x         ┬┌┐┌┌─┐┌┬┐┬─┐┬ ┬┌─┐┌┬┐┬┌─┐┌┐┌┌─┐                        x                 
-x  1 ───  ││││└─┐ │ ├┬┘│ ││   │ ││ ││││└─┐                        x                 
-x         ┴┘└┘└─┘ ┴ ┴└─└─┘└─┘ ┴ ┴└─┘┘└┘└─┘                        x                 
-x         ┌─┐┬┌┐┌┌─┐┬  ┌─┐  ┌─┐┬  ┌─┐┬ ┬┌─┐┬─┐  ┌┬┐┌─┐┌┬┐┌─┐      x 
-x  2 ───  └─┐│││││ ┬│  ├┤   ├─┘│  ├─┤└┬┘├┤ ├┬┘  ││││ │ ││├┤       x 
-x         └─┘┴┘└┘└─┘┴─┘└─┘  ┴  ┴─┘┴ ┴ ┴ └─┘┴└─  ┴ ┴└─┘─┴┘└─┘      x 
-x         ┌┬┐┬ ┬┬ ┌┬┐┬  ┌─┐┬  ┌─┐┬ ┬┌─┐┬─┐  ┌┬┐┌─┐┌┬┐┌─┐          x  
-x  3 ───  ││││ ││  │ │  ├─┘│  ├─┤└┬┘├┤ ├┬┘  ││││ │ ││├┤           x    
-x         ┴ ┴└─┘┴─┘┴ ┴  ┴  ┴─┘┴ ┴ ┴ └─┘┴└─  ┴ ┴└─┘─┴┘└─┘          x    
-x         ┌─┐┌─┐┬ ┬  ┬┌─┐  ┌┬┐┌─┐┌┬┐┌─┐                           x                     
-x  4 ───  └─┐├─┤│ └┐┌┘│ │  ││││ │ ││├┤                            x                     
-x         └─┘┴ ┴┴─┘└┘ └─┘  ┴ ┴└─┘─┴┘└─┘                           x                     
-x         ┌─┐─┐ ┬┬┌┬┐                                             x                                      
-x  5 ───  ├┤ ┌┴┬┘│ │                                              x                                      
-x         └─┘┴ └─┴ ┴                                              x
-x                                                                 x
-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-"""
-
-def instructions():
-    clear()
-    print """
-
-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx      
-x                 ╦╔╗╔╔═╗╔╦╗╦═╗╦ ╦╔═╗╔╦╗╦╔═╗╔╗╔╔═╗                          x
-x                 ║║║║╚═╗ ║ ╠╦╝║ ║║   ║ ║║ ║║║║╚═╗                          x
-x                 ╩╝╚╝╚═╝ ╩ ╩╚═╚═╝╚═╝ ╩ ╩╚═╝╝╚╝╚═╝                          x
-x                                                                           x
-x      The object of Battleship is to try and sink all of the other         x
-x      player's ships before they sink all of your ships.                   x
-x                                                                           x
-x      ┌─┐┬┌┐┌┌─┐┬  ┌─┐  ┌─┐┬  ┌─┐┬ ┬┌─┐┬─┐  ┌┬┐┌─┐┌┬┐┌─┐                   x
-x      └─┐│││││ ┬│  ├┤   ├─┘│  ├─┤└┬┘├┤ ├┬┘  ││││ │ ││├┤                    x
-x      └─┘┴┘└┘└─┘┴─┘└─┘  ┴  ┴─┘┴ ┴ ┴ └─┘┴└─  ┴ ┴└─┘─┴┘└─┘                   x
-x                                                                           x
-x      You will play against a computer and place the ships on the board.   x
-x      The placement can either be vertical or horizontal.                  x
-x                                                                           x
-x      The ships are:                                                       x
-x                                                                           x
-x      Aircraft Carrier - 5 hits                                            x
-x      Battleship - 4 hits                                                  x
-x      Submarine - 3 hits                                                   x
-x      Destroyer - 3 hits                                                   x
-x      Patrol Boat - 2 hits                                                 x
-x                                                                           x
-x      You try and hit them by calling out the coordinates of one           x
-x      of the squares on the board.                                         x
-x                                                                           x
-x      ┌┬┐┬ ┬┬ ┌┬┐┬  ┌─┐┬  ┌─┐┬ ┬┌─┐┬─┐  ┌┬┐┌─┐┌┬┐┌─┐                       x
-x      ││││ ││  │ │  ├─┘│  ├─┤└┬┘├┤ ├┬┘  ││││ │ ││├┤                        x
-x      ┴ ┴└─┘┴─┘┴ ┴  ┴  ┴─┘┴ ┴ ┴ └─┘┴└─  ┴ ┴└─┘─┴┘└─┘                       x
-x                                                                           x
-x      The rules are the same as the Single Player Mode, except both        x
-x      players have turns and place each other ships, that cannot be        x
-x      seen by the other.                                                   x
-x                                                                           x
-x      ┌─┐┌─┐┬ ┬  ┬┌─┐  ┌┬┐┌─┐┌┬┐┌─┐                                        x
-x      └─┐├─┤│ └┐┌┘│ │  ││││ │ ││├┤                                         x
-x      └─┘┴ ┴┴─┘└┘ └─┘  ┴ ┴└─┘─┴┘└─┘                                        x
-x                                                                           x
-x      Battleship rules apply but with a variation: Each player calls       x                                          x
-x      out five shots at a time.                                            x
-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-
-"""
-
-def single_player_mode():
-    clear()
-    print """
-                ╔═╗╦╔╗╔╔═╗╦  ╔═╗  ╔═╗╦  ╔═╗╦ ╦╔═╗╦═╗  ╔╦╗╔═╗╔╦╗╔═╗
-xxxxxxxxxxxxx   ╚═╗║║║║║ ╦║  ║╣   ╠═╝║  ╠═╣╚╦╝║╣ ╠╦╝  ║║║║ ║ ║║║╣    xxxxxxxxxxxxx
-                ╚═╝╩╝╚╝╚═╝╩═╝╚═╝  ╩  ╩═╝╩ ╩ ╩ ╚═╝╩╚═  ╩ ╩╚═╝═╩╝╚═╝
-    """
-
-def place_ships():
-    clear()
-    print """
-                ╔═╗╦  ╔═╗╔═╗╔═╗  ╔═╗╦ ╦╦╔═╗╔═╗
-xxxxxxxxxxxxx   ╠═╝║  ╠═╣║  ║╣   ╚═╗╠═╣║╠═╝╚═╗   xxxxxxxxxxxxx
-                ╩  ╩═╝╩ ╩╚═╝╚═╝  ╚═╝╩ ╩╩╩  ╚═╝
-    """
-    raw_input("Press Enter to continue")
-
-def user_turn():
-    clear()
-    print """
-                ╦ ╦╔═╗╔═╗╦═╗  ╔╦╗╦ ╦╦═╗╔╗╔
-xxxxxxxxxxxxx   ║ ║╚═╗║╣ ╠╦╝   ║ ║ ║╠╦╝║║║   xxxxxxxxxxxxx
-                ╚═╝╚═╝╚═╝╩╚═   ╩ ╚═╝╩╚═╝╚╝
-    """
-    raw_input("Press Enter to continue")
-
-def computer_turn():
-    clear()
-    print """
-                ╔═╗╔═╗╔╦╗╔═╗╦ ╦╔╦╗╔═╗╦═╗  ╔╦╗╦ ╦╦═╗╔╗╔
-xxxxxxxxxxxxx   ║  ║ ║║║║╠═╝║ ║ ║ ║╣ ╠╦╝   ║ ║ ║╠╦╝║║║   xxxxxxxxxxxxx
-                ╚═╝╚═╝╩ ╩╩  ╚═╝ ╩ ╚═╝╩╚═   ╩ ╚═╝╩╚═╝╚╝
-    """
-    raw_input("Press Enter to continue")
-
-
-def user_won():
-    clear()
-    print """
-              |    |    |
-             )_)  )_)  )_)
-            )___))___))___)
-           )____)____)_____)
-         _____|____|____|____
-         \                   /
-        ^^^^^^^^^^^^^^^^^^^^^^^
-      ^^      ^^^^     ^^^    ^^
-         ^^^^      ^^^    ^^^ 
-         ╦ ╦╔═╗╦ ╦  ╦ ╦╔═╗╔╗╔
-         ╚╦╝║ ║║ ║  ║║║║ ║║║║
-          ╩ ╚═╝╚═╝  ╚╩╝╚═╝╝╚╝
-"""
-
-
-def computer_won():
-    clear()
-    print """
-
-   __/\__       ╔═╗╔═╗╔╦╗╔═╗╦ ╦╔╦╗╔═╗╦═╗  ╦ ╦╔═╗╔╗╔
- ~~\____/~~     ║  ║ ║║║║╠═╝║ ║ ║ ║╣ ╠╦╝  ║║║║ ║║║║         __/\__ 
-                ╚═╝╚═╝╩ ╩╩  ╚═╝ ╩ ╚═╝╩╚═  ╚╩╝╚═╝╝╚╝       ~~\____/~~ 
-
-"""
-
-def multi_player_mode():
-    clear()
-    print """
-                ╔╦╗╦ ╦╦ ╔╦╗╦  ╔═╗╦  ╔═╗╦ ╦╔═╗╦═╗  ╔╦╗╔═╗╔╦╗╔═╗               
-xxxxxxxxxxxxx   ║║║║ ║║  ║ ║  ╠═╝║  ╠═╣╚╦╝║╣ ╠╦╝  ║║║║ ║ ║║║╣    xxxxxxxxxxxxx   
-                ╩ ╩╚═╝╩═╝╩ ╩  ╩  ╩═╝╩ ╩ ╩ ╚═╝╩╚═  ╩ ╩╚═╝═╩╝╚═╝               
-    """
-
-def p1_place_ships():
-    clear()
-    print """
-
-               ╔═╗╦  ╔═╗╦ ╦╔═╗╦═╗  ╔═╗╔╗╔╔═╗
-               ╠═╝║  ╠═╣╚╦╝║╣ ╠╦╝  ║ ║║║║║╣ 
-               ╩  ╩═╝╩ ╩ ╩ ╚═╝╩╚═  ╚═╝╝╚╝╚═╝
-xxxxxxxxxxxxx  ╔═╗╦  ╔═╗╔═╗╔═╗  ╔═╗╦ ╦╦╔═╗╔═╗  xxxxxxxxxxxxx
-               ╠═╝║  ╠═╣║  ║╣   ╚═╗╠═╣║╠═╝╚═╗ 
-               ╩  ╩═╝╩ ╩╚═╝╚═╝  ╚═╝╩ ╩╩╩  ╚═╝
-    """
-    raw_input("Press Enter to continue")
-
-def p2_place_ships():
-    clear()
-    print """
-
-               ╔═╗╦  ╔═╗╦ ╦╔═╗╦═╗  ╔╦╗╦ ╦╔═╗
-               ╠═╝║  ╠═╣╚╦╝║╣ ╠╦╝   ║ ║║║║ ║   
-xxxxxxxxxxxxx  ╩  ╩═╝╩ ╩ ╩ ╚═╝╩╚═   ╩ ╚╩╝╚═╝   xxxxxxxxxxxxx
-               ╔═╗╦  ╔═╗╔═╗╔═╗  ╔═╗╦ ╦╦╔═╗╔═╗
-               ╠═╝║  ╠═╣║  ║╣   ╚═╗╠═╣║╠═╝╚═╗ 
-               ╩  ╩═╝╩ ╩╚═╝╚═╝  ╚═╝╩ ╩╩╩  ╚═╝
-    """
-    raw_input("Press Enter to continue")
-
-
-
-def p1_turn():
-    clear()
-    print """
-                ╔═╗╦  ╔═╗╦ ╦╔═╗╦═╗  ╔═╗╔╗╔╔═╗  ╔╦╗╦ ╦╦═╗╔╗╔
-xxxxxxxxxxxxx   ╠═╝║  ╠═╣╚╦╝║╣ ╠╦╝  ║ ║║║║║╣    ║ ║ ║╠╦╝║║║   xxxxxxxxxxxxx 
-                ╩  ╩═╝╩ ╩ ╩ ╚═╝╩╚═  ╚═╝╝╚╝╚═╝   ╩ ╚═╝╩╚═╝╚╝
-    """
-    raw_input("Press Enter to continue")
-
-def p2_turn():
-    clear()
-    print """
-                ╔═╗╦  ╔═╗╦ ╦╔═╗╦═╗  ╔╦╗╦ ╦╔═╗  ╔╦╗╦ ╦╦═╗╔╗╔
-xxxxxxxxxxxxx   ╠═╝║  ╠═╣╚╦╝║╣ ╠╦╝   ║ ║║║║ ║   ║ ║ ║╠╦╝║║║   xxxxxxxxxxxxx 
-                ╩  ╩═╝╩ ╩ ╩ ╚═╝╩╚═   ╩ ╚╩╝╚═╝   ╩ ╚═╝╩╚═╝╚╝
-    """
-    raw_input("Press Enter to continue")
-
-def p1_won():
-    clear()
-    print """
-                                  ____________
-                              _  |____________|  _
-                       _=====| | |            | | |==== _
-                 =====| |.---------------------------. | |====
-   <--------------------'   .  .  .  .  .  .  .  .   '--------------/
-     \                                                             /
-      \___________________________________________________________/
-
-               ╔═╗╦  ╔═╗╦ ╦╔═╗╦═╗  ╔═╗╔╗╔╔═╗  ╦ ╦╔═╗╔╗╔
-               ╠═╝║  ╠═╣╚╦╝║╣ ╠╦╝  ║ ║║║║║╣   ║║║║ ║║║║
-               ╩  ╩═╝╩ ╩ ╩ ╚═╝╩╚═  ╚═╝╝╚╝╚═╝  ╚╩╝╚═╝╝╚╝
-
-"""
-
-def p2_won():
-    clear()
-    print """
-                                  ____________
-                              _  |____________|  _
-                       _=====| | |            | | |==== _
-                 =====| |.---------------------------. | |====
-   <--------------------'   .  .  .  .  .  .  .  .   '--------------/
-     \                                                             /
-      \___________________________________________________________/
-
-
-               ╔═╗╦  ╔═╗╦ ╦╔═╗╦═╗  ╔╦╗╦ ╦╔═╗  ╦ ╦╔═╗╔╗╔
-               ╠═╝║  ╠═╣╚╦╝║╣ ╠╦╝   ║ ║║║║ ║  ║║║║ ║║║║
-               ╩  ╩═╝╩ ╩ ╩ ╚═╝╩╚═   ╩ ╚╩╝╚═╝  ╚╩╝╚═╝╝╚╝
-"""
-
-def salvo_mode():
-    clear()
-    print """
-                ╔═╗╔═╗╦ ╦  ╦╔═╗  ╔╦╗╔═╗╔╦╗╔═╗
-xxxxxxxxxxxxx   ╚═╗╠═╣║ ╚╗╔╝║ ║  ║║║║ ║ ║║║╣    xxxxxxxxxxxxx
-                ╚═╝╩ ╩╩═╝╚╝ ╚═╝  ╩ ╩╚═╝═╩╝╚═╝
-    """
+pygame.mixer.init()
 
 ###################### SINGLE PLAYER CLASS ######################
 
@@ -292,7 +26,6 @@ class Game_SP(object):
         ask = raw_input("Do you want to return to the menu? Y/N: ")
         ask = ask.lower()
         if ask == "y":
-            board = []
             GO = Menu()
             GO.start()
         elif ask == "n":
@@ -310,7 +43,7 @@ class Game_SP(object):
         self.clear()
 
         #find out if you are printing the computer or user board
-        player = "Computer" 
+        player = "Computer"
         if single_player == "u":
             player = self.user_name[0]
 
@@ -628,7 +361,6 @@ class Game_MP(Game_SP):
 
     def play_again(self):
         """ Asks User to play again """
-        self.players_name = []
 
         ask = raw_input("Do you want to return to the menu? Y/N: ")
         ask = ask.lower()
@@ -947,7 +679,7 @@ class Salvo_Mode(Game_MP):
         p1_board = self.p1_place_ships(p1_board, ships)
 
         p2_place_ships()
-        p2_board = self.p2_place_ships(p2_board, ships) 
+        p2_board = self.p2_place_ships(p2_board, ships)
 
         #game main loop
         while 1:
@@ -960,7 +692,7 @@ class Salvo_Mode(Game_MP):
                 p2_board = self.p1_move(p2_board)
                 time.sleep(1)
                 turn += 1
-            
+
             #check if user won
                 if p2_board == "WIN":
                     turn = 5
@@ -993,11 +725,287 @@ class Salvo_Mode(Game_MP):
             #display p1 board
             self.print_board2("p1", p1_board)
             raw_input("To see your board, hit ENTER")
-            
 
             #display current p2 board
             self.print_board("p2", p2_board)
             raw_input("To end player two turn hit ENTER")
+
+###################### GLOBAL FUNCTIONS WITH IMAGES ######################
+
+def clear():
+    """Clears the screen at the terminal. Works on windows and ubuntu."""
+    if os.name == "posix":
+        os.system("reset")
+    elif os.name == "nt":
+        os.system("cls")
+
+def title():
+    """ The game's title """
+    clear()
+    print chr(27) + "[1;36m" + """
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+x                                                           x
+x       __/\__            __/\__                __/\__      x
+x     ~~\____/~~        ~~\____/~~            ~~\____/~~    x
+x                                                           x
+x               ╔╗ ╔═╗╔╦╗╔╦╗╦  ╔═╗╔═╗╦ ╦╦╔═╗                x
+x               ╠╩╗╠═╣ ║  ║ ║  ║╣ ╚═╗╠═╣║╠═╝                x
+x               ╚═╝╩ ╩ ╩  ╩ ╩═╝╚═╝╚═╝╩ ╩╩╩                  x
+x                                                           x
+x       __/\__            __/\__                __/\__      x
+x     ~~\____/~~        ~~\____/~~            ~~\____/~~    x
+x                                                           x
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+""" + chr(27) + "[0m"
+    time.sleep(0.1)
+    raw_input("Press ENTER to continue")
+
+def menu():
+    """ Game's menu """
+    clear()
+    print chr(27) + "[1;94m" + """
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+x                                                                 x
+x                         ╔╦╗╔═╗╔╗╔╦ ╦                            x
+x       __/\__            ║║║║╣ ║║║║ ║            __/\__          x
+x     ~~\____/~~          ╩ ╩╚═╝╝╚╝╚═╝          ~~\____/~~        x 
+x                                                                 x
+x                                                                 x
+x         ┬┌┐┌┌─┐┌┬┐┬─┐┬ ┬┌─┐┌┬┐┬┌─┐┌┐┌┌─┐                        x                 
+x  1 ───  ││││└─┐ │ ├┬┘│ ││   │ ││ ││││└─┐                        x                 
+x         ┴┘└┘└─┘ ┴ ┴└─└─┘└─┘ ┴ ┴└─┘┘└┘└─┘                        x                 
+x         ┌─┐┬┌┐┌┌─┐┬  ┌─┐  ┌─┐┬  ┌─┐┬ ┬┌─┐┬─┐  ┌┬┐┌─┐┌┬┐┌─┐      x 
+x  2 ───  └─┐│││││ ┬│  ├┤   ├─┘│  ├─┤└┬┘├┤ ├┬┘  ││││ │ ││├┤       x 
+x         └─┘┴┘└┘└─┘┴─┘└─┘  ┴  ┴─┘┴ ┴ ┴ └─┘┴└─  ┴ ┴└─┘─┴┘└─┘      x 
+x         ┌┬┐┬ ┬┬ ┌┬┐┬  ┌─┐┬  ┌─┐┬ ┬┌─┐┬─┐  ┌┬┐┌─┐┌┬┐┌─┐          x  
+x  3 ───  ││││ ││  │ │  ├─┘│  ├─┤└┬┘├┤ ├┬┘  ││││ │ ││├┤           x    
+x         ┴ ┴└─┘┴─┘┴ ┴  ┴  ┴─┘┴ ┴ ┴ └─┘┴└─  ┴ ┴└─┘─┴┘└─┘          x    
+x         ┌─┐┌─┐┬ ┬  ┬┌─┐  ┌┬┐┌─┐┌┬┐┌─┐                           x                     
+x  4 ───  └─┐├─┤│ └┐┌┘│ │  ││││ │ ││├┤                            x                     
+x         └─┘┴ ┴┴─┘└┘ └─┘  ┴ ┴└─┘─┴┘└─┘                           x                     
+x         ┌─┐─┐ ┬┬┌┬┐                                             x                                      
+x  5 ───  ├┤ ┌┴┬┘│ │                                              x                                      
+x         └─┘┴ └─┴ ┴                                              x
+x                                                                 x
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+""" + chr(27) + "[0m"
+
+def instructions():
+    """Game's instructions"""
+    clear()
+    print chr(27) + "[1;92m" + """
+
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx      
+x                 ╦╔╗╔╔═╗╔╦╗╦═╗╦ ╦╔═╗╔╦╗╦╔═╗╔╗╔╔═╗                          x
+x                 ║║║║╚═╗ ║ ╠╦╝║ ║║   ║ ║║ ║║║║╚═╗                          x
+x                 ╩╝╚╝╚═╝ ╩ ╩╚═╚═╝╚═╝ ╩ ╩╚═╝╝╚╝╚═╝                          x
+x                                                                           x
+x      The object of Battleship is to try and sink all of the other         x
+x      player's ships before they sink all of your ships.                   x
+x                                                                           x
+x      ┌─┐┬┌┐┌┌─┐┬  ┌─┐  ┌─┐┬  ┌─┐┬ ┬┌─┐┬─┐  ┌┬┐┌─┐┌┬┐┌─┐                   x
+x      └─┐│││││ ┬│  ├┤   ├─┘│  ├─┤└┬┘├┤ ├┬┘  ││││ │ ││├┤                    x
+x      └─┘┴┘└┘└─┘┴─┘└─┘  ┴  ┴─┘┴ ┴ ┴ └─┘┴└─  ┴ ┴└─┘─┴┘└─┘                   x
+x                                                                           x
+x      You will play against a computer and place the ships on the board.   x
+x      The placement can either be vertical or horizontal.                  x
+x                                                                           x
+x      The ships are:                                                       x
+x                                                                           x
+x      Aircraft Carrier - 5 hits                                            x
+x      Battleship - 4 hits                                                  x
+x      Submarine - 3 hits                                                   x
+x      Destroyer - 3 hits                                                   x
+x      Patrol Boat - 2 hits                                                 x
+x                                                                           x
+x      You try and hit them by calling out the coordinates of one           x
+x      of the squares on the board.                                         x
+x                                                                           x
+x      ┌┬┐┬ ┬┬ ┌┬┐┬  ┌─┐┬  ┌─┐┬ ┬┌─┐┬─┐  ┌┬┐┌─┐┌┬┐┌─┐                       x
+x      ││││ ││  │ │  ├─┘│  ├─┤└┬┘├┤ ├┬┘  ││││ │ ││├┤                        x
+x      ┴ ┴└─┘┴─┘┴ ┴  ┴  ┴─┘┴ ┴ ┴ └─┘┴└─  ┴ ┴└─┘─┴┘└─┘                       x
+x                                                                           x
+x      The rules are the same as the Single Player Mode, except both        x
+x      players have turns and place each other ships, that cannot be        x
+x      seen by the other.                                                   x
+x                                                                           x
+x      ┌─┐┌─┐┬ ┬  ┬┌─┐  ┌┬┐┌─┐┌┬┐┌─┐                                        x
+x      └─┐├─┤│ └┐┌┘│ │  ││││ │ ││├┤                                         x
+x      └─┘┴ ┴┴─┘└┘ └─┘  ┴ ┴└─┘─┴┘└─┘                                        x
+x                                                                           x
+x      Battleship rules apply but with a variation: Each player calls       x                                          x
+x      out five shots at a time.                                            x
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+""" + chr(27) + "[0m"
+
+def single_player_mode():
+    """Title for SP mode"""
+    clear()
+    print chr(27) + "[1;93m" + """
+                ╔═╗╦╔╗╔╔═╗╦  ╔═╗  ╔═╗╦  ╔═╗╦ ╦╔═╗╦═╗  ╔╦╗╔═╗╔╦╗╔═╗
+xxxxxxxxxxxxx   ╚═╗║║║║║ ╦║  ║╣   ╠═╝║  ╠═╣╚╦╝║╣ ╠╦╝  ║║║║ ║ ║║║╣    xxxxxxxxxxxxx
+                ╚═╝╩╝╚╝╚═╝╩═╝╚═╝  ╩  ╩═╝╩ ╩ ╩ ╚═╝╩╚═  ╩ ╩╚═╝═╩╝╚═╝
+""" + chr(27) + "[0m"
+
+def place_ships():
+    """Place ships title"""
+    clear()
+    print chr(27) + "[1;95m" + """
+                ╔═╗╦  ╔═╗╔═╗╔═╗  ╔═╗╦ ╦╦╔═╗╔═╗
+xxxxxxxxxxxxx   ╠═╝║  ╠═╣║  ║╣   ╚═╗╠═╣║╠═╝╚═╗   xxxxxxxxxxxxx
+                ╩  ╩═╝╩ ╩╚═╝╚═╝  ╚═╝╩ ╩╩╩  ╚═╝
+    """ + chr(27) + "[0m"
+    raw_input("Press Enter to continue")
+
+def user_turn():
+    """User turn title"""
+    clear()
+    print chr(27) + "[1;36m" + """
+                ╦ ╦╔═╗╔═╗╦═╗  ╔╦╗╦ ╦╦═╗╔╗╔
+xxxxxxxxxxxxx   ║ ║╚═╗║╣ ╠╦╝   ║ ║ ║╠╦╝║║║   xxxxxxxxxxxxx
+                ╚═╝╚═╝╚═╝╩╚═   ╩ ╚═╝╩╚═╝╚╝
+    """ + chr(27) + "[0m"
+    raw_input("Press Enter to continue")
+
+def computer_turn():
+    """Computer turn title"""
+    clear()
+    print chr(27) + "[1;91m" + """
+                ╔═╗╔═╗╔╦╗╔═╗╦ ╦╔╦╗╔═╗╦═╗  ╔╦╗╦ ╦╦═╗╔╗╔
+xxxxxxxxxxxxx   ║  ║ ║║║║╠═╝║ ║ ║ ║╣ ╠╦╝   ║ ║ ║╠╦╝║║║   xxxxxxxxxxxxx
+                ╚═╝╚═╝╩ ╩╩  ╚═╝ ╩ ╚═╝╩╚═   ╩ ╚═╝╩╚═╝╚╝
+    """ + chr(27) + "[0m"
+    raw_input("Press Enter to continue")
+
+def user_won():
+    """User won title"""
+    clear()
+    print chr(27) + "[1;94m" + """
+              |    |    |
+             )_)  )_)  )_)
+            )___))___))___)
+           )____)____)_____)
+         _____|____|____|____
+         \                   /
+        ^^^^^^^^^^^^^^^^^^^^^^^
+      ^^      ^^^^     ^^^    ^^
+         ^^^^      ^^^    ^^^ 
+         ╦ ╦╔═╗╦ ╦  ╦ ╦╔═╗╔╗╔
+         ╚╦╝║ ║║ ║  ║║║║ ║║║║
+          ╩ ╚═╝╚═╝  ╚╩╝╚═╝╝╚╝
+""" + chr(27) + "[0m"
+
+def computer_won():
+    """Computer won title"""
+    clear()
+    print chr(27) + "[1;91m" + """
+
+   __/\__       ╔═╗╔═╗╔╦╗╔═╗╦ ╦╔╦╗╔═╗╦═╗  ╦ ╦╔═╗╔╗╔
+ ~~\____/~~     ║  ║ ║║║║╠═╝║ ║ ║ ║╣ ╠╦╝  ║║║║ ║║║║         __/\__ 
+                ╚═╝╚═╝╩ ╩╩  ╚═╝ ╩ ╚═╝╩╚═  ╚╩╝╚═╝╝╚╝       ~~\____/~~ 
+
+""" + chr(27) + "[0m"
+
+def multi_player_mode():
+    """MP mode title"""
+    clear()
+    print chr(27) + "[1;93m" + """
+                ╔╦╗╦ ╦╦ ╔╦╗╦  ╔═╗╦  ╔═╗╦ ╦╔═╗╦═╗  ╔╦╗╔═╗╔╦╗╔═╗               
+xxxxxxxxxxxxx   ║║║║ ║║  ║ ║  ╠═╝║  ╠═╣╚╦╝║╣ ╠╦╝  ║║║║ ║ ║║║╣    xxxxxxxxxxxxx   
+                ╩ ╩╚═╝╩═╝╩ ╩  ╩  ╩═╝╩ ╩ ╩ ╚═╝╩╚═  ╩ ╩╚═╝═╩╝╚═╝               
+    """ + chr(27) + "[0m"
+
+def p1_place_ships():
+    """P1 place ships title"""
+    clear()
+    print chr(27) + "[1;95m" +  """
+
+               ╔═╗╦  ╔═╗╦ ╦╔═╗╦═╗  ╔═╗╔╗╔╔═╗
+               ╠═╝║  ╠═╣╚╦╝║╣ ╠╦╝  ║ ║║║║║╣ 
+               ╩  ╩═╝╩ ╩ ╩ ╚═╝╩╚═  ╚═╝╝╚╝╚═╝
+xxxxxxxxxxxxx  ╔═╗╦  ╔═╗╔═╗╔═╗  ╔═╗╦ ╦╦╔═╗╔═╗  xxxxxxxxxxxxx
+               ╠═╝║  ╠═╣║  ║╣   ╚═╗╠═╣║╠═╝╚═╗ 
+               ╩  ╩═╝╩ ╩╚═╝╚═╝  ╚═╝╩ ╩╩╩  ╚═╝
+    """ + chr(27) + "[0m"
+    raw_input("Press Enter to continue")
+
+def p2_place_ships():
+    """P2 place ships title"""
+    clear()
+    print chr(27) + "[1;95m" +  """
+
+               ╔═╗╦  ╔═╗╦ ╦╔═╗╦═╗  ╔╦╗╦ ╦╔═╗
+               ╠═╝║  ╠═╣╚╦╝║╣ ╠╦╝   ║ ║║║║ ║   
+xxxxxxxxxxxxx  ╩  ╩═╝╩ ╩ ╩ ╚═╝╩╚═   ╩ ╚╩╝╚═╝   xxxxxxxxxxxxx
+               ╔═╗╦  ╔═╗╔═╗╔═╗  ╔═╗╦ ╦╦╔═╗╔═╗
+               ╠═╝║  ╠═╣║  ║╣   ╚═╗╠═╣║╠═╝╚═╗ 
+               ╩  ╩═╝╩ ╩╚═╝╚═╝  ╚═╝╩ ╩╩╩  ╚═╝
+    """ + chr(27) + "[0m"
+    raw_input("Press Enter to continue")
+
+def p1_turn():
+    """P1 turn title"""
+    clear()
+    print chr(27) + "[1;36m" + """
+                ╔═╗╦  ╔═╗╦ ╦╔═╗╦═╗  ╔═╗╔╗╔╔═╗  ╔╦╗╦ ╦╦═╗╔╗╔
+xxxxxxxxxxxxx   ╠═╝║  ╠═╣╚╦╝║╣ ╠╦╝  ║ ║║║║║╣    ║ ║ ║╠╦╝║║║   xxxxxxxxxxxxx 
+                ╩  ╩═╝╩ ╩ ╩ ╚═╝╩╚═  ╚═╝╝╚╝╚═╝   ╩ ╚═╝╩╚═╝╚╝
+    """ + chr(27) + "[0m"
+    raw_input("Press Enter to continue")
+
+def p2_turn():
+    """P2 turn title"""
+    clear()
+    print """
+                ╔═╗╦  ╔═╗╦ ╦╔═╗╦═╗  ╔╦╗╦ ╦╔═╗  ╔╦╗╦ ╦╦═╗╔╗╔
+xxxxxxxxxxxxx   ╠═╝║  ╠═╣╚╦╝║╣ ╠╦╝   ║ ║║║║ ║   ║ ║ ║╠╦╝║║║   xxxxxxxxxxxxx 
+                ╩  ╩═╝╩ ╩ ╩ ╚═╝╩╚═   ╩ ╚╩╝╚═╝   ╩ ╚═╝╩╚═╝╚╝
+    """ + chr(27) + "[0m"
+    raw_input("Press Enter to continue")
+
+def p1_won():
+    """P1 winning message"""
+    clear()
+    print chr(27) + "[1;36m" + """
+                                  ____________
+                              _  |____________|  _
+                       _=====| | |            | | |==== _
+                 =====| |.---------------------------. | |====
+   <--------------------'   .  .  .  .  .  .  .  .   '--------------/
+     \                                                             /
+      \___________________________________________________________/
+
+               ╔═╗╦  ╔═╗╦ ╦╔═╗╦═╗  ╔═╗╔╗╔╔═╗  ╦ ╦╔═╗╔╗╔
+               ╠═╝║  ╠═╣╚╦╝║╣ ╠╦╝  ║ ║║║║║╣   ║║║║ ║║║║
+               ╩  ╩═╝╩ ╩ ╩ ╚═╝╩╚═  ╚═╝╝╚╝╚═╝  ╚╩╝╚═╝╝╚╝
+""" + chr(27) + "[0m"
+
+def p2_won():
+    """P2 winning message"""
+    clear()
+    print chr(27) + "[1;94m" + """
+                                  ____________
+                              _  |____________|  _
+                       _=====| | |            | | |==== _
+                 =====| |.---------------------------. | |====
+   <--------------------'   .  .  .  .  .  .  .  .   '--------------/
+     \                                                             /
+      \___________________________________________________________/
+
+
+               ╔═╗╦  ╔═╗╦ ╦╔═╗╦═╗  ╔╦╗╦ ╦╔═╗  ╦ ╦╔═╗╔╗╔
+               ╠═╝║  ╠═╣╚╦╝║╣ ╠╦╝   ║ ║║║║ ║  ║║║║ ║║║║
+               ╩  ╩═╝╩ ╩ ╩ ╚═╝╩╚═   ╩ ╚╩╝╚═╝  ╚╩╝╚═╝╝╚╝
+""" + chr(27) + "[0m"
+
+def salvo_mode():
+    """Salvo Mode title"""
+    clear()
+    print chr(27) + "[1;93m" + """
+                ╔═╗╔═╗╦ ╦  ╦╔═╗  ╔╦╗╔═╗╔╦╗╔═╗
+xxxxxxxxxxxxx   ╚═╗╠═╣║ ╚╗╔╝║ ║  ║║║║ ║ ║║║╣    xxxxxxxxxxxxx
+                ╚═╝╩ ╩╩═╝╚╝ ╚═╝  ╩ ╩╚═╝═╩╝╚═╝
+    """ + chr(27) + "[0m"
 
 ###################### MENU CLASS ######################
 
@@ -1007,6 +1015,8 @@ class Menu(object):
     def start(self):
         """ Starts the Game Battleship """
 
+        pygame.mixer.music.load("battleship.mp3")
+        pygame.mixer.music.play(-1)
         title()
         menu()
 
@@ -1031,35 +1041,8 @@ class Menu(object):
                 print "Only enter valid options"
                 time.sleep(0.1)
 
-###################### CALLING THE GAME ###################### 
+###################### CALLING THE GAME ######################
 
 if __name__ == "__main__":
     GO = Menu()
     GO.start()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
