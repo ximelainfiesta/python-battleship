@@ -1,9 +1,175 @@
+#coding:utf-8
+
 """BATTLESHIP"""
 
 import copy
 import random
 import os
 import time
+
+
+###################### GLOBAL FUNCTIONS WITH IMAGES ######################
+
+def clear():
+    """Clears the screen at the terminal. Works on windows and ubuntu."""
+    if os.name == "posix":
+        os.system("reset")
+    elif os.name == "nt":
+        os.system("cls")
+
+def title():
+
+    clear()
+    print """
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+x                                                           x
+x       __/\__            __/\__                __/\__      x
+x     ~~\____/~~        ~~\____/~~            ~~\____/~~    x
+x                                                           x
+x               ╔╗ ╔═╗╔╦╗╔╦╗╦  ╔═╗╔═╗╦ ╦╦╔═╗                x
+x               ╠╩╗╠═╣ ║  ║ ║  ║╣ ╚═╗╠═╣║╠═╝                x
+x               ╚═╝╩ ╩ ╩  ╩ ╩═╝╚═╝╚═╝╩ ╩╩╩                  x
+x                                                           x
+x       __/\__            __/\__                __/\__      x
+x     ~~\____/~~        ~~\____/~~            ~~\____/~~    x
+x                                                           x
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+"""
+    time.sleep(0.1)
+    raw_input("Press ENTER to continue")
+
+
+def menu():
+    clear()
+    print """ 
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+x                                                                 x
+x                         ╔╦╗╔═╗╔╗╔╦ ╦                            x
+x       __/\__            ║║║║╣ ║║║║ ║            __/\__          x
+x     ~~\____/~~          ╩ ╩╚═╝╝╚╝╚═╝          ~~\____/~~        x 
+x                                                                 x
+x                                                                 x
+x         ┬┌┐┌┌─┐┌┬┐┬─┐┬ ┬┌─┐┌┬┐┬┌─┐┌┐┌┌─┐                        x                 
+x  1 ───  ││││└─┐ │ ├┬┘│ ││   │ ││ ││││└─┐                        x                 
+x         ┴┘└┘└─┘ ┴ ┴└─└─┘└─┘ ┴ ┴└─┘┘└┘└─┘                        x                 
+x         ┌─┐┬┌┐┌┌─┐┬  ┌─┐  ┌─┐┬  ┌─┐┬ ┬┌─┐┬─┐  ┌┬┐┌─┐┌┬┐┌─┐      x 
+x  2 ───  └─┐│││││ ┬│  ├┤   ├─┘│  ├─┤└┬┘├┤ ├┬┘  ││││ │ ││├┤       x 
+x         └─┘┴┘└┘└─┘┴─┘└─┘  ┴  ┴─┘┴ ┴ ┴ └─┘┴└─  ┴ ┴└─┘─┴┘└─┘      x 
+x         ┌┬┐┬ ┬┬ ┌┬┐┬  ┌─┐┬  ┌─┐┬ ┬┌─┐┬─┐  ┌┬┐┌─┐┌┬┐┌─┐          x  
+x  3 ───  ││││ ││  │ │  ├─┘│  ├─┤└┬┘├┤ ├┬┘  ││││ │ ││├┤           x    
+x         ┴ ┴└─┘┴─┘┴ ┴  ┴  ┴─┘┴ ┴ ┴ └─┘┴└─  ┴ ┴└─┘─┴┘└─┘          x    
+x         ┌─┐┌─┐┬ ┬  ┬┌─┐  ┌┬┐┌─┐┌┬┐┌─┐                           x                     
+x  4 ───  └─┐├─┤│ └┐┌┘│ │  ││││ │ ││├┤                            x                     
+x         └─┘┴ ┴┴─┘└┘ └─┘  ┴ ┴└─┘─┴┘└─┘                           x                     
+x         ┌─┐─┐ ┬┬┌┬┐                                             x                                      
+x  5 ───  ├┤ ┌┴┬┘│ │                                              x                                      
+x         └─┘┴ └─┴ ┴                                              x
+x                                                                 x
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+"""
+
+def instructions(self):
+    clear()
+    print """
+
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx      
+x                 ╦╔╗╔╔═╗╔╦╗╦═╗╦ ╦╔═╗╔╦╗╦╔═╗╔╗╔╔═╗                          x
+x                 ║║║║╚═╗ ║ ╠╦╝║ ║║   ║ ║║ ║║║║╚═╗                          x
+x                 ╩╝╚╝╚═╝ ╩ ╩╚═╚═╝╚═╝ ╩ ╩╚═╝╝╚╝╚═╝                          x
+x                                                                           x
+x      The object of Battleship is to try and sink all of the other         x
+x      player's ships before they sink all of your ships.                   x
+x                                                                           x
+x      ┌─┐┬┌┐┌┌─┐┬  ┌─┐  ┌─┐┬  ┌─┐┬ ┬┌─┐┬─┐  ┌┬┐┌─┐┌┬┐┌─┐                   x
+x      └─┐│││││ ┬│  ├┤   ├─┘│  ├─┤└┬┘├┤ ├┬┘  ││││ │ ││├┤                    x
+x      └─┘┴┘└┘└─┘┴─┘└─┘  ┴  ┴─┘┴ ┴ ┴ └─┘┴└─  ┴ ┴└─┘─┴┘└─┘                   x
+x                                                                           x
+x      You will play against a computer and place the ships on the board.   x
+x      The placement can either be vertical or horizontal.                  x
+x                                                                           x
+x      The ships are:                                                       x
+x                                                                           x
+x      Aircraft Carrier - 5 hits                                            x
+x      Battleship - 4 hits                                                  x
+x      Submarine - 3 hits                                                   x
+x      Destroyer - 3 hits                                                   x
+x      Patrol Boat - 2 hits                                                 x
+x                                                                           x
+x      You try and hit them by calling out the coordinates of one           x
+x      of the squares on the board.                                         x
+x                                                                           x
+x      ┌┬┐┬ ┬┬ ┌┬┐┬  ┌─┐┬  ┌─┐┬ ┬┌─┐┬─┐  ┌┬┐┌─┐┌┬┐┌─┐                       x
+x      ││││ ││  │ │  ├─┘│  ├─┤└┬┘├┤ ├┬┘  ││││ │ ││├┤                        x
+x      ┴ ┴└─┘┴─┘┴ ┴  ┴  ┴─┘┴ ┴ ┴ └─┘┴└─  ┴ ┴└─┘─┴┘└─┘                       x
+x                                                                           x
+x      The rules are the same as the Single Player Mode, except both        x
+x      players have turns and place each other ships, that cannot be        x
+x      seen by the other.                                                   x
+x                                                                           x
+x      ┌─┐┌─┐┬ ┬  ┬┌─┐  ┌┬┐┌─┐┌┬┐┌─┐                                        x
+x      └─┐├─┤│ └┐┌┘│ │  ││││ │ ││├┤                                         x
+x      └─┘┴ ┴┴─┘└┘ └─┘  ┴ ┴└─┘─┴┘└─┘                                        x
+x                                                                           x
+x      Battleship rules apply but with a variation: Each player calls       x                                          x
+x      out five shots at a time.                                            x
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+"""
+
+def single_player_mode():
+    clear()
+    print """
+                ╔═╗╦╔╗╔╔═╗╦  ╔═╗  ╔═╗╦  ╔═╗╦ ╦╔═╗╦═╗  ╔╦╗╔═╗╔╦╗╔═╗
+xxxxxxxxxxxxx   ╚═╗║║║║║ ╦║  ║╣   ╠═╝║  ╠═╣╚╦╝║╣ ╠╦╝  ║║║║ ║ ║║║╣    xxxxxxxxxxxxx
+                ╚═╝╩╝╚╝╚═╝╩═╝╚═╝  ╩  ╩═╝╩ ╩ ╩ ╚═╝╩╚═  ╩ ╩╚═╝═╩╝╚═╝
+    """
+
+def place_ships():
+    clear()
+    print """
+                ╔═╗╦  ╔═╗╔═╗╔═╗  ╔═╗╦ ╦╦╔═╗╔═╗
+xxxxxxxxxxxxx   ╠═╝║  ╠═╣║  ║╣   ╚═╗╠═╣║╠═╝╚═╗   xxxxxxxxxxxxx
+                ╩  ╩═╝╩ ╩╚═╝╚═╝  ╚═╝╩ ╩╩╩  ╚═╝
+    """
+    raw_input("Press Enter to continue")
+
+def user_turn():
+    clear()
+    print """
+                ╦ ╦╔═╗╔═╗╦═╗  ╔╦╗╦ ╦╦═╗╔╗╔
+xxxxxxxxxxxxx   ║ ║╚═╗║╣ ╠╦╝   ║ ║ ║╠╦╝║║║   xxxxxxxxxxxxx
+                ╚═╝╚═╝╚═╝╩╚═   ╩ ╚═╝╩╚═╝╚╝
+    """
+    raw_input("Press Enter to continue")
+
+def computer_turn():
+    clear()
+    print """
+                ╔═╗╔═╗╔╦╗╔═╗╦ ╦╔╦╗╔═╗╦═╗  ╔╦╗╦ ╦╦═╗╔╗╔
+xxxxxxxxxxxxx   ║  ║ ║║║║╠═╝║ ║ ║ ║╣ ╠╦╝   ║ ║ ║╠╦╝║║║   xxxxxxxxxxxxx
+                ╚═╝╚═╝╩ ╩╩  ╚═╝ ╩ ╚═╝╩╚═   ╩ ╚═╝╩╚═╝╚╝
+    """
+    raw_input("Press Enter to continue")
+
+
+def user_won():
+    clear()
+    print """
+    ╦ ╦╔═╗╦ ╦  ╦ ╦╔═╗╔╗╔
+    ╚╦╝║ ║║ ║  ║║║║ ║║║║
+     ╩ ╚═╝╚═╝  ╚╩╝╚═╝╝╚╝
+"""
+
+
+def computer_won():
+    clear()
+    print """
+    ╔═╗╔═╗╔╦╗╔═╗╦ ╦╔╦╗╔═╗╦═╗  ╦ ╦╔═╗╔╗╔
+    ║  ║ ║║║║╠═╝║ ║ ║ ║╣ ╠╦╝  ║║║║ ║║║║
+    ╚═╝╚═╝╩ ╩╩  ╚═╝ ╩ ╚═╝╩╚═  ╚╩╝╚═╝╝╚╝
+"""
+
+###################### SINGLE PLAYER CLASS ######################
 
 class Game_SP(object):
     """ Single Player Modality """
@@ -14,7 +180,7 @@ class Game_SP(object):
 
     def ask_user_name(self):
         """ Asks the user for a name """
-        user_name = raw_input("Enter your name YO: ")
+        user_name = raw_input("Enter your name: ")
         return self.user_name.append(user_name)
 
     def print_board(self, single_player, board):
@@ -264,9 +430,9 @@ class Game_SP(object):
     def main(self):
         """Initiates my game"""
 
-        print "SINGLE PLAYER YO"
+        single_player_mode()
         self.ask_user_name()
-        time.sleep(1)
+        time.sleep(0.1)
 
         #types of ships
         ships = {"Aircraft Carrier":5,
@@ -291,6 +457,8 @@ class Game_SP(object):
         user_board.append(copy.deepcopy(ships))
         comp_board.append(copy.deepcopy(ships))
 
+        place_ships()
+
         #ship placement
         user_board = self.user_place_ships(user_board, ships)
         comp_board = self.computer_place_ships(comp_board, ships)
@@ -299,9 +467,10 @@ class Game_SP(object):
         while 1:
 
             #user move
+            user_turn()
             self.print_board("c", comp_board)
             comp_board = self.user_move(comp_board)
-            time.sleep(1)
+            time.sleep(0.1)
 
             #check if user won
             if comp_board == "WIN":
@@ -313,7 +482,9 @@ class Game_SP(object):
             raw_input("To end user turn hit ENTER")
 
             #computer move
+            computer_turn()
             user_board = self.computer_move(user_board)
+            time.sleep(0.1)
 
             #check if computer move
             if user_board == "WIN":
@@ -323,6 +494,8 @@ class Game_SP(object):
             #display user board
             self.print_board("u", user_board)
             raw_input("To end computer turn hit ENTER")
+
+###################### MULTI PLAYER INHERITS FROM SINGLE PLAYER ######################
 
 class Game_MP(Game_SP):
     """ Multi Player Modality """
@@ -595,6 +768,8 @@ class Game_MP(Game_SP):
             self.print_board("p2", p2_board)
             raw_input("To end player two turn hit ENTER")
 
+###################### SALVO INHERITES FROM MULTI PLAYER ######################
+
 class Salvo_Mode(Game_MP):
     """ Salvo Modality """
 
@@ -698,40 +873,39 @@ class Salvo_Mode(Game_MP):
             self.print_board("p2", p2_board)
             raw_input("To end player two turn hit ENTER")
 
+###################### MENU CLASS ######################
+
 class Menu(object):
     """ Menu of Battleship that initiates """
 
     def start(self):
         """ Starts the Game Battleship """
 
-        print "BATTLESHIP BITCHES START MESSAGE"
-        print """MENU HOES
-        1-Instructions
-        2-Single Player
-        3-Multi Player
-        4-Salvo Mode
-        5-Exit
-        """
+        title()
+        menu()
 
-        answer = raw_input("Enter Option: ")
-        if answer == "1":
-            self.instructions()
-        elif answer == "2":
-            SP = Game_SP()
-            SP.main()
-        elif answer == "3":
-            MP = Game_MP()
-            MP.main()
-        elif answer == "4":
-            SM = Salvo_Mode()
-            SM.main()
-        elif answer == "5":
-            quit()
-        else:
-            print "Only enter valid options"
+        while True:
+            answer = raw_input("Enter Option: ")
+            if answer == "1":
+                instructions()
+                raw_input("Enter to return")
+                self.start()
+            elif answer == "2":
+                SP = Game_SP()
+                SP.main()
+            elif answer == "3":
+                MP = Game_MP()
+                MP.main()
+            elif answer == "4":
+                SM = Salvo_Mode()
+                SM.main()
+            elif answer == "5":
+                quit()
+            else:
+                print "Only enter valid options"
+                time.sleep(0.1)
 
-    def instructions(self):
-        print 
+###################### PLAY AGAIN FUNCTION ######################  
 
 def play_again():
     """ Asks User to play again """
@@ -749,9 +923,15 @@ def play_again():
     else:
         print "Only enter Y or N"
 
+###################### CALLING THE GAME ###################### 
+
 if __name__ == "__main__":
     GO = Menu()
     GO.start()
+
+
+
+
 
 
 
